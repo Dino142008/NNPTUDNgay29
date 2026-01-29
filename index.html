@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quản lý sản phẩm</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 25px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+    }
+    
+    .container-main {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      padding: 35px;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 35px;
+      padding-bottom: 25px;
+      border-bottom: 3px solid transparent;
+      border-image: linear-gradient(90deg, #06b6d4 0%, #3b82f6 100%) 1;
+    }
+    
+    .header-section h1 {
+      background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+      font-weight: 800;
+      font-size: 2.5rem;
+      letter-spacing: -0.5px;
+    }
+    
+    .controls {
+      margin-bottom: 30px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+      background: linear-gradient(135deg, #f0f9ff 0%, #f0fdf4 100%);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #e0f2fe;
+    }
+    
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+    }
+    
+    .search-box input {
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px 16px;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      width: 100%;
+      background: white;
+    }
+    
+    .search-box input:focus {
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
+      outline: none;
+    }
+    
+    .search-box input::placeholder {
+      color: #94a3b8;
+    }
+    
+    .sort-section {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .sort-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #dbeafe 0%, #dbeafe 100%);
+      border-radius: 10px;
+      min-width: 220px;
+      border: 1px solid #bfdbfe;
+    }
+    
+    .sort-info i {
+      color: #0284c7;
+      font-size: 1.2rem;
+    }
+    
+    .sort-info span {
+      color: #0c4a6e;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    
+    .sort-info strong {
+      color: #0284c7;
+      font-weight: 700;
+    }
+    
+    .dropdown-menu {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+    }
+    
+    .dropdown-item {
+      padding: 12px 16px;
+      transition: all 0.25s ease;
+      color: #334155;
+      font-weight: 500;
+    }
+    
+    .dropdown-item:hover {
+      background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      color: white;
+      padding-left: 20px;
+    }
+    
+    .dropdown-item.active {
+      background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      color: white;
+    }
+    
+    table {
+      vertical-align: middle;
+      border-collapse: collapse;
+    }
+    
+    thead {
+      background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      color: white;
+    }
+    
+    thead th {
+      padding: 16px !important;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    
+    tbody tr {
+      border-bottom: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+    
+    tbody tr:hover {
+      background-color: #f0f9ff;
+      box-shadow: inset 0 2px 10px rgba(6, 182, 212, 0.08);
+      transform: scale(1.001);
+    }
+    
+    tbody td {
+      padding: 14px 16px !important;
+    }
+    
+    .description-tooltip {
+      display: none;
+      position: absolute;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: white;
+      padding: 14px 16px;
+      border-radius: 8px;
+      z-index: 1000;
+      max-width: 350px;
+      font-size: 0.85rem;
+      white-space: normal;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      word-wrap: break-word;
+      border: 1px solid #475569;
+    }
+    
+    .row-hover {
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .row-hover:hover .description-tooltip {
+      display: block;
+      bottom: 100%;
+      left: 0;
+      animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .btn-sm {
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      transition: all 0.25s ease;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .btn-warning {
+      background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+    
+    .btn-warning:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
+    }
+    
+    img {
+      border-radius: 10px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+    
+    img:hover {
+      border-color: #06b6d4;
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
+    }
+    
+    .price-cell {
+      background: linear-gradient(135deg, #dcfce7 0%, #dbeafe 100%);
+      color: #0c4a6e;
+      font-weight: 800;
+      font-size: 1.1rem;
+      padding: 8px 12px !important;
+      border-radius: 8px;
+      display: inline-block;
+    }
+    
+    .pagination-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+      padding-top: 25px;
+      border-top: 3px solid transparent;
+      border-image: linear-gradient(90deg, #06b6d4 0%, #3b82f6 100%) 1;
+    }
+    
+    .pagination-info {
+      color: #475569;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    
+    .pagination {
+      gap: 6px;
+    }
+    
+    .page-link {
+      border-radius: 8px;
+      border: 2px solid #cbd5e1;
+      color: #0284c7;
+      transition: all 0.25s ease;
+      padding: 8px 12px !important;
+      font-weight: 600;
+    }
+    
+    .page-link:hover {
+      background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      color: white;
+      border-color: transparent;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);
+    }
+    
+    .page-item.active .page-link {
+      background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+    }
+    
+    .page-item.disabled .page-link {
+      color: #cbd5e1;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container-main">
+    <div class="header-section">
+      <h1><i class="fas fa-box"></i> Quản lý sản phẩm</h1>
+    </div>
+
+    <!-- Controls Section -->
+    <div class="controls">
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="form-control" 
+          placeholder="🔍 Tìm kiếm theo tên sản phẩm..."
+        >
+      </div>
+      <div class="sort-section">
+        <div class="sort-info">
+          <i class="fas fa-sort"></i>
+          <span>Sắp xếp:</span>
+          <strong id="sortTitle">Mặc định</strong>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown">
+            <i class="fas fa-chevron-down"></i> Chọn
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+            <li><a class="dropdown-item" href="#" onclick="setSortAndDisplay('default', 'Mặc định')">Mặc định</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" onclick="setSortAndDisplay('nameAsc', 'Tên A → Z')"><i class="fas fa-arrow-up"></i> Tên A → Z</a></li>
+            <li><a class="dropdown-item" href="#" onclick="setSortAndDisplay('nameDesc', 'Tên Z → A')"><i class="fas fa-arrow-down"></i> Tên Z → A</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" onclick="setSortAndDisplay('priceAsc', 'Giá thấp → cao')"><i class="fas fa-arrow-up"></i> Giá thấp → cao</a></li>
+            <li><a class="dropdown-item" href="#" onclick="setSortAndDisplay('priceDesc', 'Giá cao → thấp')"><i class="fas fa-arrow-down"></i> Giá cao → thấp</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Ảnh</th>
+            <th>Tên sản phẩm</th>
+            <th>Danh mục</th>
+            <th>Giá</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="productList">
+          <tr>
+            <td colspan="5" class="text-center">Đang tải dữ liệu...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-section">
+      <div class="pagination-info">
+        <span>Hiển thị <strong id="itemStart">0</strong> - <strong id="itemEnd">0</strong> trong <strong id="totalItems">0</strong> sản phẩm</span>
+      </div>
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center" id="paginationList">
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Chỉnh sửa sản phẩm</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="editTitle" class="form-label">Tên sản phẩm</label>
+            <input type="text" class="form-control" id="editTitle">
+          </div>
+          <div class="mb-3">
+            <label for="editPrice" class="form-label">Giá</label>
+            <input type="number" class="form-control" id="editPrice">
+          </div>
+          <div class="mb-3">
+            <label for="editDescription" class="form-label">Mô tả</label>
+            <textarea class="form-control" id="editDescription" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="button" class="btn btn-primary" id="saveEditBtn">Lưu thay đổi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
